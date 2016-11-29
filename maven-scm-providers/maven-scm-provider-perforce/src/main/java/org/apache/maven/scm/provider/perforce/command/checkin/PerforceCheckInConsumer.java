@@ -40,6 +40,10 @@ public class PerforceCheckInConsumer
     private static final Pattern LOCKING_PATTERN = Pattern.compile( "^Locking \\d+ files \\.\\.\\.$" );
 
     private static final Pattern OPERATION_PATTERN = Pattern.compile( "^[a-z]+ //[^#]+#\\d+$" );
+    
+    //Addding the status due to which the error is being thrown from consumer even though the checkin file is successful.
+    // exit 0 is being received zero added to make sure the command is successful.
+    private static final Pattern OPERATION_STATUS = Pattern.compile( " exit 0" );
 
     // SCM-181 Two possible messages:
     // "Change 94821 renamed change 94823 and submitted."
@@ -123,6 +127,10 @@ public class PerforceCheckInConsumer
                 {
                     break;
                 }
+                else if ( OPERATION_STATUS.matcher(line).matches() )
+                {
+                	break;
+                } 
                 else if ( COMPLETE_PATTERN.matcher( line ).matches() )
                 {
                     currentState++;
